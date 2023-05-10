@@ -9,6 +9,7 @@ from verb_conjugation_dataset import VerbConjugationDataset
 
 class DataProcessor:
     def __init__(self, path_to_data, cols_to_drop=None):
+        self.max_len = None
         self.mood_map = {'indicativo': 0, 'subjuntivo': 1, 'imperativo afirmativo': 2, 'imperativo negativo': 3}
         self.tense_map = {'presente': 0, 'futuro': 1, 'imperfecto': 2, 'pretérito': 3, 'condicional': 4,
                           'presente perfecto': 5, 'futuro perfecto': 6, 'pluscuamperfecto': 7,
@@ -29,19 +30,31 @@ class DataProcessor:
         return self.data.copy(), self.endings.copy()
 
     def convert_mood(self, mood):
+        if mood in self.mood_map.values():
+            return mood
         return self.mood_map.get(mood, "no mood")
 
     def convert_tense(self, tense):
+        if tense in self.tense_map.values():
+            return tense
         return self.tense_map.get(tense, "no tense")
 
     def convert_person(self, person):
+        if person in self.person_map.values():
+            return person
         return self.person_map.get(person, "no person")
 
     def read_data(self, path, cols_to_drop=None):
         if self is not None:
             df = pd.read_csv(path)
-            df = df[df['is_reflexive'] == False]
-            df = df.dropna(subset=['infinitive', 'stem', 'tense', 'mood', 'person', 'conjugation'])
+            # if df_cols has is_reflexive, drop all rows where is_reflexive is True
+            if 'is_reflexive' in df.columns:
+                df = df[df['is_reflexive'] == False]
+            if 'stem' in df.columns:
+                df = df.dropna(subset=['stem'])
+            if 'conjugation' in df.columns:
+                df = df.dropna(subset=['conjugation'])
+            df = df.dropna(subset=['infinitive', 'tense', 'mood', 'person'])
             if cols_to_drop is not None:
                 df = df.drop(cols_to_drop, axis=1)
             df['mood'] = df['mood'].apply(self.convert_mood)
@@ -113,12 +126,12 @@ class DataProcessor:
                 vocab[token]
         return vocab
 
-    @staticmethod
-    def pad_sequences(batch, only_x=False):
+    def pad_sequences(self, batch, only_x=False):
         inputs, targets, mood_tense_person = (batch, None) if only_x else zip(*batch)
         max_len_x = max(len(x) for x in inputs)
         max_len_y = max(len(y) for y in targets) if targets is not None else 0
         max_len = max(max_len_x, max_len_y)
+        self.max_len = max_len
         padded_inputs = np.zeros((len(inputs), max_len), dtype=np.int64)
         for i, seq in enumerate(inputs):
             padded_inputs[i, :len(seq)] = seq

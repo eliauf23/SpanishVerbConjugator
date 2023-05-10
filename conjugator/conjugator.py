@@ -8,13 +8,13 @@ from utils import get_device
 class VerbConjugation:
     def __init__(self, data_processor, model_save_path="/saved_models/conjugator_model.pth", frac_train=0.7,
                  frac_test=0.2,
-                 frac_valid=0.1):
+                 frac_valid=0.1, batch_size=32):
 
         self.data = data_processor.data
         self.embedding_dim = 128
         self.hidden_size = 256
         self.n_layers = 2
-        self.batch_size = 32
+        self.batch_size = batch_size
         self.num_dir_lstm = 2
         self.default_epochs_train = 30
         self.input_vocab = data_processor.input_vocab
@@ -90,8 +90,8 @@ class VerbConjugation:
                 custom_loss += self.criterion(output.view(-1, self.output_size), target.view(-1))
 
             # Penalize for spelling mistakes (if any)
-            incorrect_conj = pred_conjugation
-            if incorrect_conj != target_conjugation:
+            if pred_conjugation != target_conjugation:
+                # TODO: check with regex for repeated characters on the end & apply penalty: nonsense_endings_penalty_weight
                 custom_loss += self.spelling_penalty_weight * self.criterion(output.view(-1, self.output_size),
                                                                              target.view(-1))
 
@@ -200,6 +200,30 @@ class VerbConjugation:
         print(
             f"Test Loss: {test_loss / len(self.test_dataloader)}, Validation Accuracy: {test_acc / len(self.test_dataloader)}")
         return s, f
+
+    def predict(self, dataloader):
+        # encode data -
+
+        self.model.eval()
+        results = []
+        with torch.no_grad():
+            for inputs, mood_tense_person in dataloader:
+                inputs = inputs.to(self.device)
+                outputs = self.model(inputs)
+                acc, targ_conj, pred_conj = self.calculate_accuracy(outputs, outputs)
+                assert acc == 1
+                print(pred_conj)
+                print(targ_conj)
+                results.extend(
+                    (mood_tense_person[x], pred_conj[x])
+                    for x in range(len(pred_conj))
+                    if x == 0
+                )
+                print(results[0])
+                return results
+        return results
+
+
 
     def continue_training(self, epochs):
         # TODO: fix
