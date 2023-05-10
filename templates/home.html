@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Conjugator</h1>
+    <form method="POST" action="/">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.infinitive.label }}
+            {{ form.infinitive(size=30, class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.tense.label }}
+            {{ form.tense(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.mood.label }}
+            {{ form.mood(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.person.label }}
+            {{ form.person(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Conjugate</button>
+    </form>
+    {% if response %}
+        {% include "conjugate.html" %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Conjugator App</title>
+</head>
+<body>
+	<h1>Conjugator App</h1>
+	<form action="{{ url_for('conjugate') }}" method="post">
+		<label for="infinitive">Infinitive:</label>
+		<input type="text" name="infinitive" required><br><br>
+
+		<label for="mood">Mood:</label>
+		<select name="mood" required>
+			<option value="Indicative">Indicative</option>
+			<option value="Subjunctive">Subjunctive</option>
+			<option value="Imperative">Imperative</option>
+			<option value="Conditional">Conditional</option>
+		</select><br><br>
+
+		<label for="tense">Tense:</label>
+		<select name="tense" required>
+			<option value="Present">Present</option>
+			<option value="Past">Past</option>
+			<option value="Future">Future</option>
+			<option value="Conditional">Conditional</option>
+		</select><br><br>
+
+		<label for="person">Person:</label>
+		<select name="person" required>
+			<option value="1s">First Singular</option>
+			<option value="2s">Second Singular</option>
+			<option value="3s">Third Singular</option>
+			<option value="1p">First Plural</option>
+			<option value="2p">Second Plural</option>
+			<option value="3p">Third Plural</option>
+		</select><br><br>
+
+		<input type="submit" value="Conjugate">
+	</form>
+</body>
+</html>

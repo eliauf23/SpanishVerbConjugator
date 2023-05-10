@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Verb Conjugator</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css">
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    <div class="content">
+
+    <h1>Verb Conjugator</h1>
+    <p>Enter an infinitive verb to see its conjugation:</p>
+    <form action="{{ url_for('home') }}" method="post">
+        {{ form.csrf_token }}
+        {{ form.infinitive.label }} {{ form.infinitive(class="select") }}<br><br>
+        {{ form.mood.label }} {{ form.mood(class="select") }}<br><br>
+        {{ form.tense.label }} {{ form.tense(class="select") }}<br><br>
+        {{ form.person.label }} {{ form.person(class="select") }}<br><br>
+        {{ form.submit(class="submit-button") }}
+    </form>
+    {% if conjugation %}
+        <h2>{{ conjugation }}:</h2>
+        <p>{{ infinitive }} - {{ mood_key }} - {{ tense_key }} - {{ person_key }}: {{ conjugation }}</p>
+        {% if is_in_dataset %}
+            <p>This verb is in the dataset.</p>
+        {% else %}
+            <p>This verb is not in the dataset.</p>
+        {% endif %}
+    {% endif %}
+    </div>
+</body>
+</html>
