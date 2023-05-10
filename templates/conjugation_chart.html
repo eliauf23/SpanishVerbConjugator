@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Conjugation Chart</h1>
+    <h2>Infinitive: {{ infinitive }}</h2>
+
+    {% set tenses = ['presente', 'futuro', 'imperfecto', 'pretérito'] %}
+    {% set persons = ['1s', '2s', '3s', '1p', '2p', '3p'] %}
+
+    <div style="display: flex;">
+        <div style="flex: 1; margin-right: 1em;">
+            <h2>Indicativo</h2>
+            {% for tense in tenses %}
+                <h3>{{ tense.capitalize() }}</h3>
+                <table border="1">
+                    <tr>
+                        <th>Person</th>
+                        <th>Conjugation</th>
+                    </tr>
+                    {% for person in persons %}
+                        <tr>
+                            <td>{{ person }}</td>
+                            <td>
+                                {% for key, value in conjugation_chart.items() if key[0] == 'indicativo' and key[1] == tense and key[2] == person %}
+                                    {{ value[0] }}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br>
+            {% endfor %}
+        </div>
+
+        <div style="flex: 1;">
+            <h2>Subjuntivo</h2>
+            {% for tense in tenses %}
+                <h3>{{ tense.capitalize() }}</h3>
+                <table border="1">
+                    <tr>
+                        <th>Person</th>
+                        <th>Conjugation</th>
+                    </tr>
+                    {% for person in persons %}
+                        <tr>
+                            <td>{{ person }}</td>
+                            <td>
+                                {% for key, value in conjugation_chart.items() if key[0] == 'subjuntivo' and key[1] == tense and key[2] == person %}
+                                    {{ value[0] }}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <br>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

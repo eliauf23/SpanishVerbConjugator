@@ -1,0 +1,103 @@
+infinitive,is_reflexive,verb_ending,stem,mood,tense,person,conjugation
+caber,False,er,cab,indicativo,presente,1s,quepo
+caber,False,er,cab,indicativo,presente,2s,cabes
+caber,False,er,cab,indicativo,presente,3s,cabe
+caber,False,er,cab,indicativo,presente,1p,cabemos
+caber,False,er,cab,indicativo,presente,2p,cabéis
+caber,False,er,cab,indicativo,presente,3p,caben
+caber,False,er,cab,indicativo,futuro,1s,cabré
+caber,False,er,cab,indicativo,futuro,2s,cabrás
+caber,False,er,cab,indicativo,futuro,3s,cabrá
+caber,False,er,cab,indicativo,futuro,1p,cabremos
+caber,False,er,cab,indicativo,futuro,2p,cabréis
+caber,False,er,cab,indicativo,futuro,3p,cabrán
+caber,False,er,cab,indicativo,imperfecto,1s,cabía
+caber,False,er,cab,indicativo,imperfecto,2s,cabías
+caber,False,er,cab,indicativo,imperfecto,3s,cabía
+caber,False,er,cab,indicativo,imperfecto,1p,cabíamos
+caber,False,er,cab,indicativo,imperfecto,2p,cabíais
+caber,False,er,cab,indicativo,imperfecto,3p,cabían
+caber,False,er,cab,indicativo,pretérito,1s,cupe
+caber,False,er,cab,indicativo,pretérito,2s,cupiste
+caber,False,er,cab,indicativo,pretérito,3s,cupo
+caber,False,er,cab,indicativo,pretérito,1p,cupimos
+caber,False,er,cab,indicativo,pretérito,2p,cupisteis
+caber,False,er,cab,indicativo,pretérito,3p,cupieron
+caber,False,er,cab,indicativo,condicional,1s,cabría
+caber,False,er,cab,indicativo,condicional,2s,cabrías
+caber,False,er,cab,indicativo,condicional,3s,cabría
+caber,False,er,cab,indicativo,condicional,1p,cabríamos
+caber,False,er,cab,indicativo,condicional,2p,cabríais
+caber,False,er,cab,indicativo,condicional,3p,cabrían
+caber,False,er,cab,indicativo,presente perfecto,1s,he cabido
+caber,False,er,cab,indicativo,presente perfecto,2s,has cabido
+caber,False,er,cab,indicativo,presente perfecto,3s,ha cabido
+caber,False,er,cab,indicativo,presente perfecto,1p,hemos cabido
+caber,False,er,cab,indicativo,presente perfecto,2p,habéis cabido
+caber,False,er,cab,indicativo,presente perfecto,3p,han cabido
+caber,False,er,cab,indicativo,futuro perfecto,1s,habré cabido
+caber,False,er,cab,indicativo,futuro perfecto,2s,habrás cabido
+caber,False,er,cab,indicativo,futuro perfecto,3s,habrá cabido
+caber,False,er,cab,indicativo,futuro perfecto,1p,habremos cabido
+caber,False,er,cab,indicativo,futuro perfecto,2p,habréis cabido
+caber,False,er,cab,indicativo,futuro perfecto,3p,habrán cabido
+caber,False,er,cab,indicativo,pluscuamperfecto,1s,había cabido
+caber,False,er,cab,indicativo,pluscuamperfecto,2s,habías cabido
+caber,False,er,cab,indicativo,pluscuamperfecto,3s,había cabido
+caber,False,er,cab,indicativo,pluscuamperfecto,1p,habíamos cabido
+caber,False,er,cab,indicativo,pluscuamperfecto,2p,habíais cabido
+caber,False,er,cab,indicativo,pluscuamperfecto,3p,habían cabido
+caber,False,er,cab,indicativo,condicional perfecto,1s,habría cabido
+caber,False,er,cab,indicativo,condicional perfecto,2s,habrías cabido
+caber,False,er,cab,indicativo,condicional perfecto,3s,habría cabido
+caber,False,er,cab,indicativo,condicional perfecto,1p,habríamos cabido
+caber,False,er,cab,indicativo,condicional perfecto,2p,habríais cabido
+caber,False,er,cab,indicativo,condicional perfecto,3p,habrían cabido
+caber,False,er,cab,subjuntivo,presente,1s,quepa
+caber,False,er,cab,subjuntivo,presente,2s,quepas
+caber,False,er,cab,subjuntivo,presente,3s,quepa
+caber,False,er,cab,subjuntivo,presente,1p,quepamos
+caber,False,er,cab,subjuntivo,presente,2p,quepáis
+caber,False,er,cab,subjuntivo,presente,3p,quepan
+caber,False,er,cab,subjuntivo,imperfecto,1s,cupiera
+caber,False,er,cab,subjuntivo,imperfecto,2s,cupieras
+caber,False,er,cab,subjuntivo,imperfecto,3s,cupiera
+caber,False,er,cab,subjuntivo,imperfecto,1p,cupiéramos
+caber,False,er,cab,subjuntivo,imperfecto,2p,cupierais
+caber,False,er,cab,subjuntivo,imperfecto,3p,cupieran
+caber,False,er,cab,subjuntivo,futuro,1s,cupiere
+caber,False,er,cab,subjuntivo,futuro,2s,cupieres
+caber,False,er,cab,subjuntivo,futuro,3s,cupiere
+caber,False,er,cab,subjuntivo,futuro,1p,cupiéremos
+caber,False,er,cab,subjuntivo,futuro,2p,cupiereis
+caber,False,er,cab,subjuntivo,futuro,3p,cupieren
+caber,False,er,cab,subjuntivo,presente perfecto,1s,haya cabido
+caber,False,er,cab,subjuntivo,presente perfecto,2s,hayas cabido
+caber,False,er,cab,subjuntivo,presente perfecto,3s,haya cabido
+caber,False,er,cab,subjuntivo,presente perfecto,1p,hayamos cabido
+caber,False,er,cab,subjuntivo,presente perfecto,2p,hayáis cabido
+caber,False,er,cab,subjuntivo,presente perfecto,3p,hayan cabido
+caber,False,er,cab,subjuntivo,futuro perfecto,1s,hubiere cabido
+caber,False,er,cab,subjuntivo,futuro perfecto,2s,hubieres cabido
+caber,False,er,cab,subjuntivo,futuro perfecto,3s,hubiere cabido
+caber,False,er,cab,subjuntivo,futuro perfecto,1p,hubiéremos cabido
+caber,False,er,cab,subjuntivo,futuro perfecto,2p,hubiereis cabido
+caber,False,er,cab,subjuntivo,futuro perfecto,3p,hubieren cabido
+caber,False,er,cab,subjuntivo,pluscuamperfecto,1s,hubiera cabido
+caber,False,er,cab,subjuntivo,pluscuamperfecto,2s,hubieras cabido
+caber,False,er,cab,subjuntivo,pluscuamperfecto,3s,hubiera cabido
+caber,False,er,cab,subjuntivo,pluscuamperfecto,1p,hubiéramos cabido
+caber,False,er,cab,subjuntivo,pluscuamperfecto,2p,hubierais cabido
+caber,False,er,cab,subjuntivo,pluscuamperfecto,3p,hubieran cabido
+caber,False,er,cab,imperativo afirmativo,presente,1s,
+caber,False,er,cab,imperativo afirmativo,presente,2s,cabe
+caber,False,er,cab,imperativo afirmativo,presente,3s,cabed
+caber,False,er,cab,imperativo afirmativo,presente,1p,
+caber,False,er,cab,imperativo afirmativo,presente,2p,quepa
+caber,False,er,cab,imperativo afirmativo,presente,3p,quepan
+caber,False,er,cab,imperativo negativo,presente,1s,
+caber,False,er,cab,imperativo negativo,presente,2s,no quepas
+caber,False,er,cab,imperativo negativo,presente,3s,no quepáis
+caber,False,er,cab,imperativo negativo,presente,1p,
+caber,False,er,cab,imperativo negativo,presente,2p,no quepa
+caber,False,er,cab,imperativo negativo,presente,3p,no quepan

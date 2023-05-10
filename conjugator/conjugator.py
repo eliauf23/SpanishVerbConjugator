@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 
-from verb_conjugation_lstm import VerbConjugationLSTM
-from utils import get_device
+from conjugator.verb_conjugation_lstm import VerbConjugationLSTM
+from conjugator.utils import get_device
 class VerbConjugation:
     def __init__(self, data_processor, model_save_path="/saved_models/conjugator_model.pth", frac_train=0.7,
                  frac_test=0.2,
@@ -106,7 +106,12 @@ class VerbConjugation:
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
         if self.data is not None:
             if test_only:
-                self.test_dataloader = self.data_processor.create_dataloader(self.data, self.batch_size)
+                self.train_dataloader, self.val_dataloader, self.test_dataloader = self.data_processor.split_data_and_create_dataloaders(
+                    frac_train=0.0,
+                    frac_test=1.0,
+                    frac_valid=0.0,
+                    random_state=42,
+                    batch_size=self.batch_size)
             else:
                 self.train_dataloader, self.val_dataloader, self.test_dataloader = self.data_processor.split_data_and_create_dataloaders(
                 frac_train=self.frac_train,
@@ -173,6 +178,7 @@ class VerbConjugation:
             f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss / len(self.val_dataloader)}, Validation Accuracy: {val_accuracy / len(self.val_dataloader)}")
 
     def test(self):
+        conjugations = []
         s, f = [], []
         self.model.eval()
         test_loss = 0
@@ -185,24 +191,21 @@ class VerbConjugation:
                 loss = self.calculate_custom_loss(outputs, targets, mood_tense_person)
                 test_loss += loss.item()
                 acc, target_conj, pred_conj = self.calculate_accuracy(outputs, targets)
-                f.extend(
+                conjugations.extend(
                     (mood_tense_person[x], pred_conj[x], target_conj[x])
                     for x in range(len(pred_conj))
-                    if pred_conj[x] != target_conj[x]
-                )
-                s.extend(
-                    (mood_tense_person[x], pred_conj[x], target_conj[x])
-                    for x in range(len(pred_conj))
-                    if pred_conj[x] == target_conj[x]
+                    if True
                 )
                 i = i + 1
                 test_acc += acc
         print(
             f"Test Loss: {test_loss / len(self.test_dataloader)}, Validation Accuracy: {test_acc / len(self.test_dataloader)}")
-        return s, f
+        # return s, f
+        return conjugations
 
     def predict(self, dataloader):
         # encode data -
+        # TODO: fix
 
         self.model.eval()
         results = []
@@ -214,16 +217,8 @@ class VerbConjugation:
                 assert acc == 1
                 print(pred_conj)
                 print(targ_conj)
-                results.extend(
-                    (mood_tense_person[x], pred_conj[x])
-                    for x in range(len(pred_conj))
-                    if x == 0
-                )
-                print(results[0])
                 return results
         return results
-
-
 
     def continue_training(self, epochs):
         # TODO: fix

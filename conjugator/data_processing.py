@@ -1,30 +1,77 @@
 import pandas as pd
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from sklearn.preprocessing import OneHotEncoder
 from collections import defaultdict
-from verb_conjugation_dataset import VerbConjugationDataset
+from conjugator.verb_conjugation_dataset import VerbConjugationDataset
+from torch.utils.data import Dataset
+
+
+class SingleInputDataset(Dataset):
+    def __init__(self, single_input, mood_tense_person):
+        self.single_input = single_input
+        self.mood_tense_person = mood_tense_person
+
+    def __getitem__(self, index):
+        return self.single_input[index], self.mood_tense_person[index]
+
+    def __len__(self):
+        return len(self.single_input)
+
+
+class SingleInputWithTargetDataset(Dataset):
+    def __init__(self, single_input, target, mood_tense_person):
+        self.single_input = single_input
+        self.target = target
+        self.mood_tense_person = mood_tense_person
+
+    def __getitem__(self, index):
+        return self.single_input, self.target, self.mood_tense_person
+
+    def __len__(self):
+        return len(self.single_input)
 
 
 class DataProcessor:
-    def __init__(self, path_to_data, cols_to_drop=None):
+    def __init__(self, path_to_data=None, cols_to_drop=None, df=None):
         self.max_len = None
         self.mood_map = {'indicativo': 0, 'subjuntivo': 1, 'imperativo afirmativo': 2, 'imperativo negativo': 3}
         self.tense_map = {'presente': 0, 'futuro': 1, 'imperfecto': 2, 'pretérito': 3, 'condicional': 4,
                           'presente perfecto': 5, 'futuro perfecto': 6, 'pluscuamperfecto': 7,
                           'condicional perfecto': 8}
         self.person_map = {'1s': 0, '2s': 1, '3s': 2, '1p': 3, '2p': 4, '3p': 5}
-        self.data = None
+        self.data = self.process_data_provided_in_df(df) if df is not None else None
         self.path_to_data = path_to_data
         self.endings = None
         self.cols_to_drop = cols_to_drop
         self.input_vocab = None
         self.output_vocab = None
+        self.load_dataset()
+        print("dataset loaded")
+        self.build_and_encode_dataset()
+        print("dataset built and encoded")
+
+    def process_data_provided_in_df(self, df):
+        # if df_cols has is_reflexive, drop all rows where is_reflexive is True
+        if 'is_reflexive' in df.columns:
+            df = df[df['is_reflexive'] == False]
+        if 'stem' in df.columns:
+            df = df.dropna(subset=['stem'])
+        if 'conjugation' in df.columns:
+            df = df.dropna(subset=['conjugation'])
+        df = df.dropna(subset=['infinitive', 'tense', 'mood', 'person'])
+        df['mood'] = df['mood'].apply(self.convert_mood)
+        df['tense'] = df['tense'].apply(self.convert_tense)
+        df['person'] = df['person'].apply(self.convert_person)
+        df = df[(df['mood'] != "no mood") & (df['tense'] != "no tense") & (df['person'] != "no person")]
+        df = df.sample(frac=1, random_state=42)
+        df.reset_index(drop=True, inplace=True)
+        return df
 
     def load_dataset(self):
         if self.data is None:
-            self.read_data(self.path_to_data, self.cols_to_drop)
+            self.data = self.read_data(self.path_to_data, self.cols_to_drop)
         if self.endings is None:
             self.create_dictionary_common_endings()
         return self.data.copy(), self.endings.copy()
@@ -63,13 +110,14 @@ class DataProcessor:
             df = df[(df['mood'] != "no mood") & (df['tense'] != "no tense") & (df['person'] != "no person")]
             df = df.sample(frac=1, random_state=42)
             df.reset_index(drop=True, inplace=True)
-            self.data = df
-            return
+            return df
         raise FileNotFoundError("path supplied to read_data must be defined")
 
     def create_dictionary_common_endings(self):
+        path = "/Users/eliauf/PycharmProjects/VerbConjugator/data/cleaned_data.csv"
+        data = self.read_data(path)
         self.endings = defaultdict(lambda: defaultdict(lambda: defaultdict(set)))
-        for _, row in self.data.iterrows():
+        for _, row in data.iterrows():
             person = row['person']
             tense = row['tense']
             mood = row['mood']
@@ -127,7 +175,11 @@ class DataProcessor:
         return vocab
 
     def pad_sequences(self, batch, only_x=False):
-        inputs, targets, mood_tense_person = (batch, None) if only_x else zip(*batch)
+        if only_x:
+            targets = None
+            inputs, mood_tense_person = zip(*batch)
+        else:
+            inputs, targets, mood_tense_person = zip(*batch)
         max_len_x = max(len(x) for x in inputs)
         max_len_y = max(len(y) for y in targets) if targets is not None else 0
         max_len = max(max_len_x, max_len_y)
@@ -178,8 +230,8 @@ class DataProcessor:
     def split_data_and_create_dataloaders(self, frac_train=0.7, frac_test=0.2, frac_valid=0.1, random_state=42,
                                           batch_size=32):
 
-        train_data, val_data, test_data = self.split_data(frac_train=frac_train, frac_valid=frac_valid,
-                                                          frac_test=frac_test, random_state=random_state)
+        train_data, test_data, val_data, = self.split_data(frac_train=frac_train, frac_valid=frac_valid,
+                                                           frac_test=frac_test, random_state=random_state)
         # create datasets
         train_dataset = VerbConjugationDataset(train_data) if frac_train > 0.0 else None
         val_dataset = VerbConjugationDataset(val_data) if frac_valid > 0.0 else None
@@ -191,4 +243,54 @@ class DataProcessor:
                             collate_fn=self.pad_sequences) if frac_valid > 0.0 else None
         test_dl = DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
                              collate_fn=self.pad_sequences) if frac_test > 0.0 else None
+        print(f"Test size: {len(test_data)}")
         return train_dl, val_dl, test_dl
+
+    def create_dataloader(self, data, batch_size=32):
+        dataset = VerbConjugationDataset(data, return_y=True)
+        return DataLoader(dataset, batch_size=batch_size, shuffle=False, collate_fn=self.pad_sequences)
+
+    def create_single_input_dataloader(self, infinitive, mood, tense, person, batch_size=1):
+        if self.input_vocab is None or self.output_vocab is None:
+            raise ValueError("Input and output vocabularies must be built before creating a single input dataloader")
+
+        mood = self.convert_mood(mood)
+        tense = self.convert_tense(tense)
+        person = self.convert_person(person)
+
+        one_hot_encoder = OneHotEncoder()
+        one_hot_data = one_hot_encoder.fit_transform([[mood, tense, person]]).toarray()
+        padded_one_hot_data = np.pad(one_hot_data, ((0, 0), (0, len(self.input_vocab) - 1)), 'constant')
+
+        infinitive_encoded = self.encode([infinitive], self.input_vocab)[0]
+        single_input = np.concatenate((infinitive_encoded, [self.input_vocab['<PAD>']], padded_one_hot_data[0]), axis=0)
+
+        single_input_dataset = SingleInputDataset([single_input], [(mood, tense, person)])
+        single_input_dl = DataLoader(single_input_dataset, batch_size=batch_size, shuffle=False,
+                                     collate_fn=lambda batch: self.pad_sequences(batch, only_x=True))
+
+        return single_input_dl
+
+    def create_single_input_dataloader_with_target(self, infinitive, mood, tense, person, target=None, batch_size=1):
+        if self.input_vocab is None or self.output_vocab is None:
+            raise ValueError(
+                "Input and output vocabularies must be built before creating a single input dataloader")
+        mood = self.convert_mood(mood)
+        tense = self.convert_tense(tense)
+        person = self.convert_person(person)
+
+        one_hot_encoder = OneHotEncoder()
+        one_hot_data = one_hot_encoder.fit_transform([[mood, tense, person]]).toarray()
+        padded_one_hot_data = np.pad(one_hot_data, ((0, 0), (0, len(self.input_vocab) - 1)), 'constant')
+
+        infinitive_encoded = self.encode([infinitive], self.input_vocab)[0]
+        conjugation_encoded = self.encode([target], self.output_vocab)[0]
+        single_input = np.concatenate((infinitive_encoded, [self.input_vocab['<PAD>']], padded_one_hot_data[0]), axis=0)
+        single_input_dataset = SingleInputWithTargetDataset([single_input], [(mood, tense, person)],
+                                                            [conjugation_encoded])
+        return DataLoader(
+            single_input_dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=self.pad_sequences,
+        )
